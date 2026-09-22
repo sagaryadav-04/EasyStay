@@ -88,7 +88,7 @@ public class PricingUpdateService {
 
     private void updateInvertoryPrices(List<Inventory> inventoryList){
         inventoryList.forEach(inventory -> {
-            BigDecimal dynamicPrice= pricingService.calaculateDynamicPrice(inventory);
+            BigDecimal dynamicPrice= pricingService.calculateDynamicPricing(inventory);
             inventory.setPrice(dynamicPrice);
 
         });

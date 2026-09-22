@@ -45,13 +45,10 @@ public class Booking {
     private LocalDate checkOutDate;
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(nullable = false)
     private LocalDateTime updatedAt;
-
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -67,5 +64,8 @@ public class Booking {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
+
+    @Column(unique = true)
+    private String paymentSessionId;
 
 }
