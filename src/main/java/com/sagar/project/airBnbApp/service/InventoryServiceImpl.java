@@ -56,7 +56,7 @@ public class InventoryServiceImpl implements InventoryService{
     }
 
     @Override
-    public void deleteAllInvertory(Room room) {
+    public void deleteAllInventories(Room room) {
         log.info("Deleting the Inventories for room with id {}", room.getId());
         inventoryRepository.deleteByRoom(room);
     }

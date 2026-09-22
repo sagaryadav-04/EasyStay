@@ -10,7 +10,8 @@ public interface InventoryService {
 
     void initializeRoomForAYear(Room room);
 
-    void deleteAllInvertory(Room room);
+    void deleteAllInventories(Room room);
 
     Page<HotelPriceDto> searchHotels(HotelSearchRequest hotelSearchRequest);
+
 }
