@@ -418,19 +418,6 @@ curl http://localhost:8080/api/v1/users/profile \
 
 ---
 
-## 10. 📌 Known gaps
-
-> [!NOTE]
-> Current limitations, kept here deliberately rather than left to be discovered.
-
-- **Expired reservations are not swept.** Expiry is evaluated when a booking is read, so held inventory is not returned to sale until something touches that booking. A scheduled sweeper is the fix.
-- **Holiday detection is stubbed.** `HolidayPricingStrategy` currently treats every date as a holiday. It needs a calendar source behind it.
-- **Test coverage is thin.** Only the context-load test exists. Testcontainers against a real PostgreSQL instance would be the right foundation.
-- **Search results are uncached.** The `HotelMinPrice` rollup keeps queries cheap, but a cache in front of it is the next step under load.
-- **No container setup.** Getting started still requires a locally installed PostgreSQL.
-
----
-
 <div align="center">
 
 **Sagar Yadav** · [github.com/sagaryadav-04](https://github.com/sagaryadav-04)
