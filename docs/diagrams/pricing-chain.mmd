@@ -1,0 +1,9 @@
+flowchart LR
+    A["<b>Base</b><br/>room.basePrice"]
+    B["<b>Surge</b><br/>× surgeFactor"]
+    C["<b>Occupancy</b><br/>× 1.20"]
+    D["<b>Urgency</b><br/>× 1.15"]
+    E["<b>Holiday</b><br/>× 1.25"]
+    F(["<b>Final price</b>"])
+
+    A --> B --> C --> D --> E --> F

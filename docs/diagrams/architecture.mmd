@@ -1,0 +1,33 @@
+flowchart TB
+    Client(["Client application"])
+
+    SEC["<b>Security filter chain</b><br/><small>JWTAuthFilter · authorization rules</small>"]
+    WEB["<b>Controller layer</b><br/><small>Auth · Guest · Admin · Webhook</small>"]
+    SVC["<b>Service layer</b><br/><small>Booking · Inventory · Pricing · Checkout</small>"]
+    REPO["<b>Repository layer</b><br/><small>Spring Data JPA · custom JPQL · row locks</small>"]
+    DB[("PostgreSQL")]
+
+    ADV["<b>Cross-cutting advice</b><br/><small>GlobalExceptionHandler<br/>GlobalResponseHandler</small>"]
+    SCH["<b>PricingUpdateService</b><br/><small>@Scheduled, hourly</small>"]
+    STRIPE(["Stripe API"])
+
+    Client --> SEC
+    SEC --> WEB
+    WEB --> SVC
+    SVC --> REPO
+    REPO --> DB
+
+    ADV -.->|"wraps every response"| WEB
+    SCH -->|"recomputes prices"| SVC
+    SVC <-->|"checkout · refunds"| STRIPE
+    STRIPE -.->|"signed webhook"| WEB
+
+    classDef entry fill:#eef2f7,stroke:#6b7684,stroke-width:1px,color:#1c2024
+    classDef layer fill:#f4f6f8,stroke:#8b95a1,stroke-width:1.2px,color:#1c2024
+    classDef side fill:#fbfcfd,stroke:#c8cfd8,stroke-width:1px,color:#3d4650
+    classDef store fill:#e8eef6,stroke:#6b7684,stroke-width:1.2px,color:#1c2024
+
+    class Client entry
+    class SEC,WEB,SVC,REPO layer
+    class ADV,SCH side
+    class DB,STRIPE store

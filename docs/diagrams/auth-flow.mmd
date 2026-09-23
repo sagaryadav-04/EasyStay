@@ -1,0 +1,21 @@
+flowchart TB
+    L["POST /auth/login"] --> V{"Credentials<br/>valid?"}
+    V -- no --> E["401 Unauthorized"]
+    V -- yes --> T["Issue token pair"]
+
+    T --> AT["<b>Access token</b><br/>10 minutes<br/><small>returned in the response body</small>"]
+    T --> RT["<b>Refresh token</b><br/>6 months<br/><small>HttpOnly cookie</small>"]
+
+    AT --> F["JWTAuthFilter<br/><small>validates Authorization: Bearer</small>"]
+    F --> SC["SecurityContext populated"]
+
+    NOTOK["Request with no token<br/><small>filter passes it straight through</small>"]
+
+    SC --> R{"Requested path"}
+    NOTOK --> R
+
+    R -- "/admin/**" --> ADM["<b>hasRole HOTEL_MANAGER</b><br/><small>plus an ownership check in the service</small>"]
+    R -- "/bookings/** · /users/**" --> USR["<b>authenticated</b><br/><small>any signed-in user</small>"]
+    R -- "everything else" --> PUB["<b>permitAll</b><br/><small>/auth/** · /hotels/**<br/>open with or without a token</small>"]
+
+    RT -.->|"POST /auth/refresh"| AT

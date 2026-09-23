@@ -1,0 +1,123 @@
+erDiagram
+    app_user ||--o{ user_roles : "has"
+    app_user ||--o{ hotel : "owns"
+    app_user ||--o{ booking : "places"
+    app_user ||--o{ guest : "saves"
+
+    hotel ||--o{ room : "offers"
+    hotel ||--o{ inventory : "daily availability"
+    hotel ||--o{ hotel_min_price : "cheapest per day"
+    hotel ||--o{ booking : "receives"
+
+    room ||--o{ inventory : "one row per date"
+    room ||--o{ booking : "reserved as"
+
+    booking ||--o{ booking_guest : ""
+    guest ||--o{ booking_guest : ""
+    booking ||--o| payment : "settled by"
+
+    app_user {
+        bigint id PK
+        varchar email UK
+        varchar password "BCrypt hash"
+        varchar name
+        date date_of_birth
+        varchar gender
+    }
+
+    user_roles {
+        bigint user_id FK
+        varchar roles "GUEST or HOTEL_MANAGER"
+    }
+
+    hotel {
+        bigint id PK
+        varchar name
+        varchar city
+        boolean active
+        text photos
+        text amenities
+        varchar address "embedded contact info"
+        varchar phone_number "embedded contact info"
+        varchar email "embedded contact info"
+        varchar location "embedded contact info"
+        bigint owner_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    room {
+        bigint id PK
+        varchar type
+        numeric base_price
+        integer capacity
+        integer total_count
+        text photos
+        text amenities
+        bigint hotel_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    inventory {
+        bigint id PK
+        date date
+        integer total_count
+        integer reserved_count
+        integer booked_count
+        numeric surge_factor
+        numeric price
+        boolean closed
+        varchar city
+        bigint hotel_id FK
+        bigint room_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    hotel_min_price {
+        bigint id PK
+        date date
+        numeric price
+        bigint hotel_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    booking {
+        bigint id PK
+        date check_in_date
+        date check_out_date
+        integer rooms_count
+        numeric amount
+        varchar booking_status
+        varchar payment_session_id UK
+        bigint hotel_id FK
+        bigint room_id FK
+        bigint user_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    booking_guest {
+        bigint booking_id FK
+        bigint guest_id FK
+    }
+
+    guest {
+        bigint id PK
+        varchar name
+        integer age
+        varchar gender
+        bigint user_id FK
+    }
+
+    payment {
+        bigint id PK
+        varchar transaction_id UK
+        varchar payment_status
+        numeric amount
+        bigint booking_id FK
+        timestamp created_at
+        timestamp updated_at
+    }

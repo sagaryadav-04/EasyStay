@@ -1,0 +1,41 @@
+sequenceDiagram
+    autonumber
+    actor U as Guest
+    participant AUTH as AuthController
+    participant API as HotelBookingController
+    participant BS as BookingService
+    participant INV as InventoryRepository
+    participant PS as PricingService
+    participant ST as Stripe
+
+    U->>AUTH: POST /auth/login
+    AUTH-->>U: access token, refresh cookie
+    Note over U,ST: Browsing is public. Everything below requires Authorization: Bearer
+
+    U->>API: POST /bookings/init
+    API->>BS: initialiseBooking()
+    BS->>INV: findAndLockAvailableInventory()
+    Note over INV: PESSIMISTIC_WRITE lock on every date row
+    INV-->>BS: locked rows
+    BS->>BS: row count must equal night count
+    BS->>INV: initBooking, reservedCount increases
+    BS->>PS: calculateTotalPrice()
+    PS-->>BS: price from the decorator chain
+    BS-->>U: RESERVED, held for 10 minutes
+
+    U->>API: POST /bookings/{id}/addGuests
+    API->>BS: ownership, expiry and state checks
+    BS-->>U: GUESTS_ADDED
+
+    U->>API: POST /bookings/{id}/payments
+    BS->>ST: create Checkout Session
+    ST-->>BS: session URL and session id
+    BS-->>U: redirect URL, PAYMENTS_PENDING
+
+    U->>ST: completes payment
+    ST->>API: POST /webhook/payment, signed
+    API->>BS: capturePayment(event)
+    BS->>INV: findAndLockReservedInventory()
+    BS->>INV: confirmBooking, reserved becomes booked
+    BS-->>ST: 204 No Content
+    Note over U: CONFIRMED
