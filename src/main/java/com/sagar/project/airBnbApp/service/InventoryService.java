@@ -1,10 +1,10 @@
 package com.sagar.project.airBnbApp.service;
 
-import com.sagar.project.airBnbApp.dto.HotelDto;
-import com.sagar.project.airBnbApp.dto.HotelPriceDto;
-import com.sagar.project.airBnbApp.dto.HotelSearchRequest;
+import com.sagar.project.airBnbApp.dto.*;
 import com.sagar.project.airBnbApp.entity.Room;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface InventoryService {
 
@@ -14,4 +14,7 @@ public interface InventoryService {
 
     Page<HotelPriceDto> searchHotels(HotelSearchRequest hotelSearchRequest);
 
+    List<InventoryDto> getAllInventoryByRoom(Long roomId);
+
+    void updateInventory(Long roomId, UpdateInventoryRequestDto updateInventoryRequestDto);
 }

@@ -1,6 +1,9 @@
 package com.sagar.project.airBnbApp.controller;
 
+import com.sagar.project.airBnbApp.dto.BookingDto;
 import com.sagar.project.airBnbApp.dto.HotelDto;
+import com.sagar.project.airBnbApp.dto.HotelReportDto;
+import com.sagar.project.airBnbApp.service.BookingService;
 import com.sagar.project.airBnbApp.service.HotelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -17,6 +21,7 @@ import java.util.List;
 public class HotelController {
 
     private final HotelService hotelService;
+    private final BookingService bookingService;
 
     @GetMapping
     public ResponseEntity<List<HotelDto>> getAllHotels() {
@@ -53,5 +58,20 @@ public class HotelController {
     public ResponseEntity<Void> activateHotel(@PathVariable Long hotelId) {
         hotelService.activateHotel(hotelId);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/{hotelId}/bookings")
+    public ResponseEntity<List<BookingDto>> getAlBookingsByHotelId(@PathVariable Long hotelId) {
+        return ResponseEntity.ok(bookingService.getAllBookingsByHotelId(hotelId));
+    }
+
+    @GetMapping("/{hotelId}/reports")
+    public ResponseEntity<HotelReportDto> getHotelReport(@PathVariable Long hotelId,
+                                                         @RequestParam(required = false) LocalDate startDate,
+                                                         @RequestParam(required = false) LocalDate endDate) {
+
+        if (startDate == null) startDate = LocalDate.now().minusMonths(1);
+        if (endDate == null) endDate = LocalDate.now();
+
+        return ResponseEntity.ok(bookingService.getHotelReport(hotelId, startDate, endDate));
     }
 }
